@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {FiArrowLeft} from 'react-icons/fi';
-import { Map, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker,  } from 'react-leaflet'
 import { LeafletMouseEvent } from 'leaflet';
 import axios from 'axios';
 import api from '../../services/api';
@@ -44,7 +44,7 @@ const CreatePoint = () => {
     const [selectItems, setSelectItems] = useState<number[]>([]);
     const [selectPosition, setSelectPosition] = useState<[number, number]>([0,0]);
 
-    const history = useHistory()
+    const navigate = useNavigate()
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position =>{
@@ -142,7 +142,7 @@ const CreatePoint = () => {
         await api.post('points', data)
         alert('Ponto de coleta salvo');
 
-        history.push('/');
+        navigate('/');
 
     }
 
@@ -203,15 +203,25 @@ const CreatePoint = () => {
                         <h2>Endereço</h2>
                         <span>Selecione o edereço no mapa</span>
                     </legend>
+                    
+                    render(
+                        <MapContainer 
+                            center={initialPosition}
+                            zoom={13} 
+                            scrollWheelZoom={false} 
+                            //onClick={handleMapClick}
+                        >
 
-                    <Map center={initialPosition} zoom={25} onClick={handleMapClick}>
-                        <TileLayer
-                            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                            <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
+                            />
 
-                        <Marker position={selectPosition} />
-                    </Map>
+
+
+                            <Marker position={selectPosition} />
+                        </MapContainer>
+                    )
 
                     <div className="field-group">
                         <div className="field">
